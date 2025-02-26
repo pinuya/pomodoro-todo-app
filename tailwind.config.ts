@@ -5,17 +5,15 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: [
-          "Inter",
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
-          "Apple Color Emoji",
-          "Segoe UI Emoji",
-          "Segoe UI Symbol",
-          "Noto Color Emoji",
-        ],
+        sans: ["IBM Plex Mono"],
       },
+    },
+    colors: {
+      "100": "#EFF0D5",
+      "200": "#E0E0B6",
+      "300": "#C4D4AB",
+      "400": "#87B091",
+      primary: "#171430",
     },
   },
   plugins: [],
