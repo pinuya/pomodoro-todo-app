@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { ListChecks, Minus, PictureInPicture2, X } from "lucide-react";
+import { ListChecks, Minus, PictureInPicture2, Plus, X } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -33,7 +33,17 @@ export default function Index() {
           </div>
         </header>
 
-        <main className="p-4">Lista</main>
+        <main className="p-4 justify-center items-center flex flex-col">
+          <div>
+            <span>Adicione um item a sua lista</span>
+
+            <div className="w-full bg-300/60 border-2 rounded-2xl flex justify-between p-2">
+              teste <Plus />
+            </div>
+          </div>
+
+          <div>lista</div>
+        </main>
       </div>
     </div>
   );
