@@ -14,6 +14,7 @@ export default {
       "300": "#C4D4AB",
       "400": "#87B091",
       primary: "#171430",
+      red: "#FF0000",
     },
   },
   plugins: [],

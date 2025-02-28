@@ -33,12 +33,20 @@ export default function Index() {
           </div>
         </header>
 
-        <main className="p-4 justify-center items-center flex flex-col">
-          <div>
-            <span>Adicione um item a sua lista</span>
+        <main className="p-4 flex flex-col justify-center items-center w-full">
+          <div className="w-full">
+            <span className="block text-center mb-2">
+              Adicione um item a sua lista
+            </span>
 
-            <div className="w-full bg-300/60 border-2 rounded-2xl flex justify-between p-2">
-              teste <Plus />
+            <div className="bg-300/60 border-2 rounded-2xl flex items-center p-2">
+              <input
+                type="text"
+                placeholder="Digite aqui..."
+                className="flex-1 bg-transparent outline-none px-0 border-0 appearance-none focus:ring-0"
+                style={{ backgroundColor: "transparent", boxShadow: "none" }}
+              />
+              <Plus className="ml-2 cursor-pointer" />
             </div>
           </div>
 
