@@ -31,7 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-300 text-primary font-extrabold">
+      <body className="bg-300 text-primary">
         {children}
         <ScrollRestoration />
         <Scripts />

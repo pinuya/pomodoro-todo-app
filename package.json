@@ -15,6 +15,7 @@
     "@remix-run/react": "^2.15.3",
     "@remix-run/serve": "^2.15.3",
     "isbot": "^4.1.0",
+    "lucide-react": "^0.476.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
