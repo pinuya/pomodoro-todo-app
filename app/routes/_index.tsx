@@ -4,7 +4,7 @@ import { ListChecks, Minus, PictureInPicture2, Plus, X } from "lucide-react";
 export const meta: MetaFunction = () => {
   return [
     { title: "ToDo App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { name: "ToDo App", content: "Welcome to ToDo App!" },
   ];
 };
 
@@ -33,8 +33,8 @@ export default function Index() {
           </div>
         </header>
 
-        <main className="p-4 flex flex-col justify-center items-center w-full">
-          <div className="w-full">
+        <main className="p-4 flex flex-col justify-center items-center w-full space-y-10">
+          <div className="w-full p-10 space-y-4">
             <span className="block text-center mb-2">
               Adicione um item a sua lista
             </span>
@@ -50,7 +50,27 @@ export default function Index() {
             </div>
           </div>
 
-          <div>lista</div>
+          <div className="bg-400 w-full h-96 rounded-b-2xl flex justify-center items-center p-4">
+            <div className="w-96">
+              <div className="overflow-y-auto max-h-64 custom-scrollbar pr-2">
+                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
+                  teste
+                </div>
+                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
+                  teste
+                </div>
+                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
+                  teste
+                </div>
+                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
+                  teste
+                </div>
+                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
+                  teste
+                </div>
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     </div>
