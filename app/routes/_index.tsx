@@ -56,18 +56,6 @@ export default function Index() {
                 <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
                   teste
                 </div>
-                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
-                  teste
-                </div>
-                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
-                  teste
-                </div>
-                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
-                  teste
-                </div>
-                <div className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1">
-                  teste
-                </div>
               </div>
             </div>
           </div>
