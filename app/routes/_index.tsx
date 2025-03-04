@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Form } from "@remix-run/react";
-import { json } from "@remix-run/node";
 import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from "@remix-run/node";
+  ClientActionFunctionArgs,
+  Form,
+  useLoaderData,
+  useSubmit,
+} from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import {
   ListChecks,
   Minus,
@@ -22,75 +23,84 @@ export const meta: MetaFunction = () => {
     { name: "ToDo App", content: "Welcome to ToDo App!" },
   ];
 };
-
 interface Todo {
   id: string;
   text: string;
   completed: boolean;
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  return json({ message: "Bem-vindo à lista de tarefas" });
-};
+export const action = () => ({});
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await request.formData();
+export const clientAction = async ({
+  request,
+  serverAction,
+}: ClientActionFunctionArgs) => {
+  const formData = await request.clone().formData();
   const intent = formData.get("intent");
   const todoText = formData.get("todoItem");
+  const id = formData.get("id");
+  console.log(id, intent);
 
-  return json({
-    intent,
-    todoText,
-  });
+  if (intent === "add" && todoText) {
+    addTodo(todoText as string);
+  }
+
+  if (intent === "delete") {
+    deleteTodo(id as string);
+  }
+
+  if ((intent === "toggle" && id) || (id && intent === null)) {
+    toggleTodo(id as string);
+  }
+
+  return await serverAction();
+};
+
+export const clientLoader = () => {
+  const todos = JSON.parse(localStorage.getItem("todos") || "[]");
+  return { todos };
+};
+
+const addTodo = (text: string) => {
+  const newTodo: Todo = {
+    id: Date.now().toString(),
+    text,
+    completed: false,
+  };
+
+  const prevTodos = JSON.parse(localStorage.getItem("todos") || "[]");
+  const incompleteTodos = prevTodos.filter((todo) => !todo.completed);
+  const completedTodos = prevTodos.filter((todo) => todo.completed);
+
+  const newTodos = [newTodo, ...incompleteTodos, ...completedTodos];
+  localStorage.setItem("todos", JSON.stringify(newTodos));
+};
+
+const deleteTodo = (id: string) => {
+  const prevTodos = JSON.parse(localStorage.getItem("todos") || "[]");
+
+  const newTodos = prevTodos.filter((todo) => todo.id !== id);
+  localStorage.setItem("todos", JSON.stringify(newTodos));
+};
+
+const toggleTodo = (id: string) => {
+  const prevTodos = JSON.parse(localStorage.getItem("todos") || "[]");
+  const updatedTodos = prevTodos.map((todo) =>
+    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  );
+
+  const sortedTodos = [
+    ...updatedTodos.filter((todo) => !todo.completed),
+    ...updatedTodos.filter((todo) => todo.completed),
+  ];
+
+  localStorage.setItem("todos", JSON.stringify(sortedTodos));
 };
 
 export default function Index() {
-  const [todos, setTodos] = useState<Todo[]>(() => {
-    const savedTodos =
-      typeof window !== "undefined"
-        ? JSON.parse(localStorage.getItem("todos") || "[]")
-        : [];
+  const { todos } = useLoaderData<typeof clientLoader>();
 
-    return savedTodos;
-  });
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("todos", JSON.stringify(todos));
-    }
-  }, [todos]);
-
-  const addTodo = (text: string) => {
-    const newTodo: Todo = {
-      id: Date.now().toString(),
-      text,
-      completed: false,
-    };
-
-    setTodos((prevTodos) => {
-      const incompleteTodos = prevTodos.filter((todo) => !todo.completed);
-      const completedTodos = prevTodos.filter((todo) => todo.completed);
-
-      return [newTodo, ...incompleteTodos, ...completedTodos];
-    });
-  };
-
-  const toggleTodo = (id: string) => {
-    const updatedTodos = todos.map((todo) =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
-
-    const sortedTodos = [
-      ...updatedTodos.filter((todo) => !todo.completed),
-      ...updatedTodos.filter((todo) => todo.completed),
-    ];
-
-    setTodos(sortedTodos);
-  };
-
-  const deleteTodo = (id: string) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-  };
+  const submit = useSubmit();
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -125,18 +135,6 @@ export default function Index() {
             <Form
               method="post"
               className="bg-300/60 border-2 rounded-2xl flex items-center p-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const form = e.currentTarget;
-                const input = form.elements.namedItem(
-                  "todoItem"
-                ) as HTMLInputElement;
-
-                if (input.value.trim()) {
-                  addTodo(input.value);
-                  input.value = "";
-                }
-              }}
             >
               <input
                 type="text"
@@ -145,7 +143,7 @@ export default function Index() {
                 className="flex-1 bg-transparent outline-none px-0 border-0 appearance-none focus:ring-0"
                 style={{ backgroundColor: "transparent", boxShadow: "none" }}
               />
-              <button type="submit">
+              <button type="submit" value={"add"} name="intent">
                 <Plus className="ml-2 cursor-pointer" />
               </button>
             </Form>
@@ -162,27 +160,35 @@ export default function Index() {
                   </div>
                 ) : (
                   todos.map((todo) => (
-                    <div
+                    <Form
+                      onChange={(e) => {
+                        submit(e.currentTarget);
+                      }}
+                      method="post"
                       key={todo.id}
                       className={`
                         bg-100 border-2 p-4 w-full mb-4 flex items-center 
                         ${todo.completed ? "opacity-50 line-through" : ""}
                       `}
                     >
+                      <input type="hidden" name="id" value={todo.id} />
                       <input
+                        name="intent"
+                        value={"toggle"}
                         type="checkbox"
-                        checked={todo.completed}
-                        onChange={() => toggleTodo(todo.id)}
+                        defaultChecked={todo.completed}
                         className="mr-3"
                       />
                       <span className="flex-1">{todo.text}</span>
                       <button
-                        onClick={() => deleteTodo(todo.id)}
+                        name="intent"
+                        value="delete"
+                        type="submit"
                         className="ml-2 text-red-500 hover:text-red-700"
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>
-                    </div>
+                    </Form>
                   ))
                 )}
               </div>
