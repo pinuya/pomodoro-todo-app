@@ -1,7 +1,20 @@
-import { useState } from "react";
-import { Form, useActionData } from "@remix-run/react";
-import { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { ListChecks, Minus, PictureInPicture2, X, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Form } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
+import {
+  ListChecks,
+  Minus,
+  PictureInPicture2,
+  X,
+  Plus,
+  Trash2,
+  ClipboardList,
+} from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,21 +23,73 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+interface Todo {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  return json({ message: "Bem-vindo à lista de tarefas" });
+};
+
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
-  const todoItem = formData.get("todoItem");
+  const intent = formData.get("intent");
+  const todoText = formData.get("todoItem");
 
-  return { todoItem };
+  return json({
+    intent,
+    todoText,
+  });
 };
 
 export default function Index() {
-  const actionData = useActionData<typeof action>();
-  const [todos, setTodos] = useState<string[]>([]);
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    const savedTodos =
+      typeof window !== "undefined"
+        ? JSON.parse(localStorage.getItem("todos") || "[]")
+        : [];
 
-  const handleAddTodo = () => {
-    if (actionData?.todoItem) {
-      setTodos((prevTodos) => [...prevTodos, actionData.todoItem as string]);
+    return savedTodos;
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("todos", JSON.stringify(todos));
     }
+  }, [todos]);
+
+  const addTodo = (text: string) => {
+    const newTodo: Todo = {
+      id: Date.now().toString(),
+      text,
+      completed: false,
+    };
+
+    setTodos((prevTodos) => {
+      const incompleteTodos = prevTodos.filter((todo) => !todo.completed);
+      const completedTodos = prevTodos.filter((todo) => todo.completed);
+
+      return [newTodo, ...incompleteTodos, ...completedTodos];
+    });
+  };
+
+  const toggleTodo = (id: string) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    );
+
+    const sortedTodos = [
+      ...updatedTodos.filter((todo) => !todo.completed),
+      ...updatedTodos.filter((todo) => todo.completed),
+    ];
+
+    setTodos(sortedTodos);
+  };
+
+  const deleteTodo = (id: string) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   return (
@@ -60,10 +125,22 @@ export default function Index() {
             <Form
               method="post"
               className="bg-300/60 border-2 rounded-2xl flex items-center p-2"
-              onSubmit={handleAddTodo}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const input = form.elements.namedItem(
+                  "todoItem"
+                ) as HTMLInputElement;
+
+                if (input.value.trim()) {
+                  addTodo(input.value);
+                  input.value = "";
+                }
+              }}
             >
               <input
                 type="text"
+                name="todoItem"
                 placeholder="Digite aqui..."
                 className="flex-1 bg-transparent outline-none px-0 border-0 appearance-none focus:ring-0"
                 style={{ backgroundColor: "transparent", boxShadow: "none" }}
@@ -77,14 +154,37 @@ export default function Index() {
           <div className="bg-400 w-full h-96 rounded-b-2xl flex justify-center items-center p-4">
             <div className="w-96">
               <div className="overflow-y-auto max-h-64 custom-scrollbar pr-2">
-                {todos.map((todo, index) => (
-                  <div
-                    key={index}
-                    className="bg-100 border-2 p-4 w-full mb-4 line-clamp-1"
-                  >
-                    {todo}
+                {todos.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center text-center text-gray-500 p-6">
+                    <ClipboardList className="h-12 w-12 mb-4" />
+                    <p className="text-lg">Lista vazia</p>
+                    <p className="text-sm">Adicione novos itens</p>
                   </div>
-                ))}
+                ) : (
+                  todos.map((todo) => (
+                    <div
+                      key={todo.id}
+                      className={`
+                        bg-100 border-2 p-4 w-full mb-4 flex items-center 
+                        ${todo.completed ? "opacity-50 line-through" : ""}
+                      `}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={todo.completed}
+                        onChange={() => toggleTodo(todo.id)}
+                        className="mr-3"
+                      />
+                      <span className="flex-1">{todo.text}</span>
+                      <button
+                        onClick={() => deleteTodo(todo.id)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
