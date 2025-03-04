@@ -4,6 +4,9 @@
 <h1 align="center">To Do App</h1>
 
 [![Site preview](/public/toDo.png)](https://github.com/pinuya)
+Project built with [Remix](https://remix.run/), [TailwindCSS](https://tailwindcss.com/), and [React](https://react.dev/). Check out the [deployed website](https://to-do-app-eight-rho-67.vercel.app/).
+
+The purpose of this project is a simple To-Do list where you can add, mark, and delete tasks. The goal is to keep it very simple, easy to use, and with a beautiful interface.
 
 ## Install & run
 
