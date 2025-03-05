@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
 import {
   ClientActionFunctionArgs,
   Form,
   useLoaderData,
   useSubmit,
 } from "@remix-run/react";
-import { json } from "@remix-run/node";
-import { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import { MetaFunction } from "@remix-run/node";
 import {
   ListChecks,
   Minus,
@@ -16,6 +14,12 @@ import {
   Trash2,
   ClipboardList,
 } from "lucide-react";
+import {
+  addTodo,
+  deleteTodo,
+  safeParseTodos,
+  toggleTodo,
+} from "~/utils/todos.client";
 
 export const meta: MetaFunction = () => {
   return [
@@ -23,11 +27,6 @@ export const meta: MetaFunction = () => {
     { name: "ToDo App", content: "Welcome to ToDo App!" },
   ];
 };
-interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-}
 
 export const action = () => ({});
 
@@ -39,7 +38,6 @@ export const clientAction = async ({
   const intent = formData.get("intent");
   const todoText = formData.get("todoItem");
   const id = formData.get("id");
-  console.log(id, intent);
 
   if (intent === "add" && todoText) {
     addTodo(todoText as string);
@@ -57,44 +55,10 @@ export const clientAction = async ({
 };
 
 export const clientLoader = () => {
-  const todos = JSON.parse(localStorage.getItem("todos") || "[]");
-  return { todos };
-};
-
-const addTodo = (text: string) => {
-  const newTodo: Todo = {
-    id: Date.now().toString(),
-    text,
-    completed: false,
+  const parsedTodos = safeParseTodos();
+  return {
+    todos: parsedTodos,
   };
-
-  const prevTodos = JSON.parse(localStorage.getItem("todos") || "[]");
-  const incompleteTodos = prevTodos.filter((todo) => !todo.completed);
-  const completedTodos = prevTodos.filter((todo) => todo.completed);
-
-  const newTodos = [newTodo, ...incompleteTodos, ...completedTodos];
-  localStorage.setItem("todos", JSON.stringify(newTodos));
-};
-
-const deleteTodo = (id: string) => {
-  const prevTodos = JSON.parse(localStorage.getItem("todos") || "[]");
-
-  const newTodos = prevTodos.filter((todo) => todo.id !== id);
-  localStorage.setItem("todos", JSON.stringify(newTodos));
-};
-
-const toggleTodo = (id: string) => {
-  const prevTodos = JSON.parse(localStorage.getItem("todos") || "[]");
-  const updatedTodos = prevTodos.map((todo) =>
-    todo.id === id ? { ...todo, completed: !todo.completed } : todo
-  );
-
-  const sortedTodos = [
-    ...updatedTodos.filter((todo) => !todo.completed),
-    ...updatedTodos.filter((todo) => todo.completed),
-  ];
-
-  localStorage.setItem("todos", JSON.stringify(sortedTodos));
 };
 
 export default function Index() {
