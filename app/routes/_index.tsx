@@ -153,7 +153,6 @@ export default function Index() {
 
           <div className="flex h-96 w-full items-center justify-center rounded-b-2xl bg-400 p-4">
             <div className="w-96">
-              {/* Container com Perfect Scrollbar */}
               <div
                 ref={scrollContainerRef}
                 className="relative max-h-64 overflow-y-auto pr-6"
@@ -174,7 +173,11 @@ export default function Index() {
                       key={todo.id}
                       className={`
                         bg-100 border-2 p-4 w-full mb-4 flex items-center 
-                        ${todo.completed ? "opacity-50 line-through" : ""}
+                        ${
+                          todo.completed
+                            ? "opacity-50 line-through decoration-2"
+                            : ""
+                        }
                       `}
                     >
                       <input type="hidden" name="id" value={todo.id} />

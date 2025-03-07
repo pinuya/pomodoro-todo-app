@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #eff0d5;
+  border-color: black;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✔";
+  font-size: 14px;
+  color: black;
+  position: absolute;
+  left: 3px;
+  top: -2px;
+}
