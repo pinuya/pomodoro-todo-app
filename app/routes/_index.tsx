@@ -20,6 +20,12 @@ import {
   safeParseTodos,
   toggleTodo,
 } from "~/utils/todos.client";
+import { useEffect, useRef } from "react";
+import PerfectScrollbar from "perfect-scrollbar";
+import "perfect-scrollbar/css/perfect-scrollbar.css";
+
+// Importe o CSS personalizado para a scrollbar
+import "~/styles/custom-scrollbar.css";
 
 export const meta: MetaFunction = () => {
   return [
@@ -63,48 +69,80 @@ export const clientLoader = () => {
 
 export default function Index() {
   const { todos } = useLoaderData<typeof clientLoader>();
-
   const submit = useSubmit();
+
+  // Referência para o contêiner de rolagem
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const psRef = useRef<PerfectScrollbar | null>(null);
+
+  // Inicializar Perfect Scrollbar
+  useEffect(() => {
+    if (scrollContainerRef.current && !psRef.current) {
+      psRef.current = new PerfectScrollbar(scrollContainerRef.current, {
+        wheelSpeed: 1,
+        wheelPropagation: true,
+        minScrollbarLength: 20,
+        suppressScrollX: true, // Desativa scrollbar horizontal
+      });
+    }
+
+    return () => {
+      // Limpar ao desmontar
+      if (psRef.current) {
+        psRef.current.destroy();
+        psRef.current = null;
+      }
+    };
+  }, []);
+
+  // Atualizar Perfect Scrollbar quando os todos mudarem
+  useEffect(() => {
+    if (psRef.current) {
+      setTimeout(() => {
+        psRef.current?.update();
+      }, 0);
+    }
+  }, [todos]);
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="bg-100 rounded-2xl w-full max-w-2xl mx-auto border-2 shadow-lg">
-        <header className="flex flex-row justify-between bg-400 border-b-2 rounded-t-2xl items-center py-3 px-4">
+      <div className="mx-auto w-full max-w-2xl rounded-2xl border-2 bg-100 shadow-lg">
+        <header className="flex flex-row items-center justify-between rounded-t-2xl border-b-2 bg-400 px-4 py-3">
           <div className="flex items-center gap-2 sm:gap-4">
             <ListChecks className="h-5 w-5 sm:h-6 sm:w-6" />
-            <h1 className="font-semibold text-lg sm:text-2xl">To Do</h1>
+            <h1 className="text-lg font-semibold sm:text-2xl">To Do</h1>
           </div>
 
           <div className="flex items-center gap-1 sm:gap-3">
-            <div className="p-1 flex items-center justify-center bg-300">
+            <div className="flex items-center justify-center bg-300 p-1">
               <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
 
-            <div className="p-1 flex items-center justify-center bg-300">
+            <div className="flex items-center justify-center bg-300 p-1">
               <PictureInPicture2 className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
 
-            <div className="p-1 flex items-center justify-center bg-300">
+            <div className="flex items-center justify-center bg-300 p-1">
               <X className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
           </div>
         </header>
 
-        <main className="p-4 flex flex-col justify-center items-center w-full space-y-10">
-          <div className="w-full p-10 space-y-4">
-            <span className="block text-center mb-2">
+        <main className="flex w-full flex-col items-center justify-center space-y-10 p-4">
+          <div className="w-full space-y-4 p-10">
+            <span className="mb-2 block text-center">
               Adicione um item a sua lista
             </span>
 
             <Form
               method="post"
-              className="bg-300/60 border-2 rounded-2xl flex items-center p-2"
+              className="flex items-center rounded-2xl border-2 bg-300/60 p-2"
             >
               <input
                 type="text"
                 name="todoItem"
                 placeholder="Digite aqui..."
-                className="flex-1 bg-transparent outline-none px-0 border-0 appearance-none focus:ring-0"
+                className="bg-transparent flex-1 appearance-none border-0 px-0 outline-none focus:ring-0"
                 style={{ backgroundColor: "transparent", boxShadow: "none" }}
               />
               <button type="submit" value={"add"} name="intent">
@@ -113,12 +151,16 @@ export default function Index() {
             </Form>
           </div>
 
-          <div className="bg-400 w-full h-96 rounded-b-2xl flex justify-center items-center p-4">
+          <div className="flex h-96 w-full items-center justify-center rounded-b-2xl bg-400 p-4">
             <div className="w-96">
-              <div className="overflow-y-auto max-h-64 custom-scrollbar pr-2">
+              {/* Container com Perfect Scrollbar */}
+              <div
+                ref={scrollContainerRef}
+                className="relative max-h-64 overflow-y-auto pr-6"
+              >
                 {todos.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center text-center text-gray-500 p-6">
-                    <ClipboardList className="h-12 w-12 mb-4" />
+                  <div className="text-gray-500 flex flex-col items-center justify-center p-6 text-center">
+                    <ClipboardList className="mb-4 h-12 w-12" />
                     <p className="text-lg">Lista vazia</p>
                     <p className="text-sm">Adicione novos itens</p>
                   </div>
@@ -148,7 +190,7 @@ export default function Index() {
                         name="intent"
                         value="delete"
                         type="submit"
-                        className="ml-2 text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-700 ml-2"
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>

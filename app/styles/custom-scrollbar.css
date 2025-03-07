@@ -1,0 +1,37 @@
+/* Cor de fundo da trilha da scrollbar */
+.ps__rail-y {
+  background-color: #eff0d5 !important;
+  width: 12px !important;
+  opacity: 1 !important;
+  border-radius: 6px !important;
+}
+
+/* Estilo do thumb (a parte que se move) */
+.ps__thumb-y {
+  background-color: #c4d4ab !important;
+  width: 8px !important;
+  right: 2px !important;
+}
+
+/* Elementos decorativos (se necessário) */
+.ps__thumb-y::before,
+.ps__thumb-y::after {
+  content: "";
+  background-color: #c4d4ab;
+  z-index: 10;
+}
+
+.ps__thumb-y::before {
+  top: 25%;
+}
+
+.ps__thumb-y::after {
+  bottom: 25%;
+}
+
+/* Estilo de hover para a scrollbar */
+.ps:hover > .ps__rail-y,
+.ps--focus > .ps__rail-y,
+.ps--scrolling-y > .ps__rail-y {
+  opacity: 1 !important;
+}
