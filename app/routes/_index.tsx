@@ -24,7 +24,6 @@ import { useEffect, useRef } from "react";
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
-// Importe o CSS personalizado para a scrollbar
 import "~/styles/custom-scrollbar.css";
 
 export const meta: MetaFunction = () => {
@@ -70,8 +69,8 @@ export const clientLoader = () => {
 export default function Index() {
   const { todos } = useLoaderData<typeof clientLoader>();
   const submit = useSubmit();
+  const todoFormRef = useRef<HTMLFormElement>(null);
 
-  // Referência para o contêiner de rolagem
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const psRef = useRef<PerfectScrollbar | null>(null);
 
@@ -82,12 +81,11 @@ export default function Index() {
         wheelSpeed: 1,
         wheelPropagation: true,
         minScrollbarLength: 20,
-        suppressScrollX: true, // Desativa scrollbar horizontal
+        suppressScrollX: true,
       });
     }
 
     return () => {
-      // Limpar ao desmontar
       if (psRef.current) {
         psRef.current.destroy();
         psRef.current = null;
@@ -103,6 +101,14 @@ export default function Index() {
       }, 0);
     }
   }, [todos]);
+
+  const handleSubmitTodo = (event: React.FormEvent<HTMLFormElement>) => {
+    setTimeout(() => {
+      if (todoFormRef.current) {
+        todoFormRef.current.reset();
+      }
+    }, 10);
+  };
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -135,7 +141,9 @@ export default function Index() {
             </span>
 
             <Form
+              ref={todoFormRef}
               method="post"
+              onSubmit={handleSubmitTodo}
               className="flex items-center rounded-2xl border-2 bg-300/60 p-2"
             >
               <input
