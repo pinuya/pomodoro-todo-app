@@ -1,6 +1,7 @@
 import {
   ClientActionFunctionArgs,
   Form,
+  Link,
   useLoaderData,
   useSubmit,
 } from "@remix-run/react";
@@ -28,8 +29,8 @@ import "~/styles/custom-scrollbar.css";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "ToDo App" },
-    { name: "ToDo App", content: "Welcome to ToDo App!" },
+    { title: "Pomodoro - ToDo Site" },
+    { name: "Pomodoro - ToDo Site", content: "Pomodoro - ToDo Site" },
   ];
 };
 
@@ -74,7 +75,6 @@ export default function Index() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const psRef = useRef<PerfectScrollbar | null>(null);
 
-  // Inicializar Perfect Scrollbar
   useEffect(() => {
     if (scrollContainerRef.current && !psRef.current) {
       psRef.current = new PerfectScrollbar(scrollContainerRef.current, {
@@ -93,7 +93,6 @@ export default function Index() {
     };
   }, []);
 
-  // Atualizar Perfect Scrollbar quando os todos mudarem
   useEffect(() => {
     if (psRef.current) {
       setTimeout(() => {
@@ -111,29 +110,33 @@ export default function Index() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex flex-col gap-4">
+      <nav className="flex flex-row items-center justify-between border-b-2 bg-400 px-4 py-3">
+        <Link to={"/"} className="flex items-center gap-2 sm:gap-4">
+          <img
+            src="/favicon.ico"
+            alt="Logo"
+            className="h-6 w-6 sm:h-8 sm:w-8"
+          />
+          <h1 className="text-lg font-semibold sm:text-2xl">Pomodoro</h1>
+        </Link>
+
+        <div className="flex items-center gap-1 sm:gap-3">
+          <div className="flex items-center justify-center bg-300 p-1">
+            <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
+          </div>
+
+          <div className="flex items-center justify-center bg-300 p-1">
+            <PictureInPicture2 className="h-4 w-4 sm:h-5 sm:w-5" />
+          </div>
+
+          <div className="flex items-center justify-center bg-300 p-1">
+            <X className="h-4 w-4 sm:h-5 sm:w-5" />
+          </div>
+        </div>
+      </nav>
+
       <div className="mx-auto w-full max-w-2xl rounded-2xl border-2 bg-100 shadow-lg">
-        <header className="flex flex-row items-center justify-between rounded-t-2xl border-b-2 bg-400 px-4 py-3">
-          <div className="flex items-center gap-2 sm:gap-4">
-            <ListChecks className="h-5 w-5 sm:h-6 sm:w-6" />
-            <h1 className="text-lg font-semibold sm:text-2xl">To Do</h1>
-          </div>
-
-          <div className="flex items-center gap-1 sm:gap-3">
-            <div className="flex items-center justify-center bg-300 p-1">
-              <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
-            </div>
-
-            <div className="flex items-center justify-center bg-300 p-1">
-              <PictureInPicture2 className="h-4 w-4 sm:h-5 sm:w-5" />
-            </div>
-
-            <div className="flex items-center justify-center bg-300 p-1">
-              <X className="h-4 w-4 sm:h-5 sm:w-5" />
-            </div>
-          </div>
-        </header>
-
         <main className="flex w-full flex-col items-center justify-center space-y-10 p-4">
           <div className="w-full space-y-4 p-10">
             <span className="mb-2 block text-center">

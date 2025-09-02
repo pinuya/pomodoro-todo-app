@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["IBM Plex Mono"],
+        outfit: ["Outfit", "sans-serif"],
+        archivo: ["Archivo", "sans-serif"],
       },
     },
     colors: {
