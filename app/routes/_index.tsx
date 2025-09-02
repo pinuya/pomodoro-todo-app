@@ -7,7 +7,6 @@ import {
 } from "@remix-run/react";
 import { MetaFunction } from "@remix-run/node";
 import {
-  ListChecks,
   Minus,
   PictureInPicture2,
   X,
@@ -26,6 +25,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 import "~/styles/custom-scrollbar.css";
+import PomodoroTimer from "~/components/Pomodoro";
 
 export const meta: MetaFunction = () => {
   return [
@@ -136,7 +136,11 @@ export default function Index() {
         </div>
       </nav>
 
-      <div className="mx-auto w-full max-w-2xl rounded-2xl border-2 bg-100 shadow-lg">
+      <section>
+        <PomodoroTimer />
+      </section>
+
+      {/* <section className="mx-auto w-full max-w-2xl rounded-2xl border-2 bg-100 shadow-lg">
         <main className="flex w-full flex-col items-center justify-center space-y-10 p-4">
           <div className="w-full space-y-4 p-10">
             <span className="mb-2 block text-center">
@@ -215,7 +219,7 @@ export default function Index() {
             </div>
           </div>
         </main>
-      </div>
+      </section> */}
     </div>
   );
 }
