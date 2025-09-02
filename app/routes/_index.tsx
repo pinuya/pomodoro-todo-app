@@ -1,27 +1,6 @@
-import {
-  ClientActionFunctionArgs,
-  Form,
-  Link,
-  useLoaderData,
-  useSubmit,
-} from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import { MetaFunction } from "@remix-run/node";
-import {
-  Minus,
-  PictureInPicture2,
-  X,
-  Plus,
-  Trash2,
-  ClipboardList,
-} from "lucide-react";
-import {
-  addTodo,
-  deleteTodo,
-  safeParseTodos,
-  toggleTodo,
-} from "~/utils/todos.client";
-import { useEffect, useRef } from "react";
-import PerfectScrollbar from "perfect-scrollbar";
+import { Minus, PictureInPicture2, X } from "lucide-react";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 import "~/styles/custom-scrollbar.css";
@@ -34,83 +13,9 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const action = () => ({});
-
-export const clientAction = async ({
-  request,
-  serverAction,
-}: ClientActionFunctionArgs) => {
-  const formData = await request.clone().formData();
-  const intent = formData.get("intent");
-  const todoText = formData.get("todoItem");
-  const id = formData.get("id");
-
-  if (intent === "add" && todoText) {
-    addTodo(todoText as string);
-  }
-
-  if (intent === "delete") {
-    deleteTodo(id as string);
-  }
-
-  if ((intent === "toggle" && id) || (id && intent === null)) {
-    toggleTodo(id as string);
-  }
-
-  return await serverAction();
-};
-
-export const clientLoader = () => {
-  const parsedTodos = safeParseTodos();
-  return {
-    todos: parsedTodos,
-  };
-};
-
 export default function Index() {
-  const { todos } = useLoaderData<typeof clientLoader>();
-  const submit = useSubmit();
-  const todoFormRef = useRef<HTMLFormElement>(null);
-
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const psRef = useRef<PerfectScrollbar | null>(null);
-
-  useEffect(() => {
-    if (scrollContainerRef.current && !psRef.current) {
-      psRef.current = new PerfectScrollbar(scrollContainerRef.current, {
-        wheelSpeed: 1,
-        wheelPropagation: true,
-        minScrollbarLength: 20,
-        suppressScrollX: true,
-      });
-    }
-
-    return () => {
-      if (psRef.current) {
-        psRef.current.destroy();
-        psRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (psRef.current) {
-      setTimeout(() => {
-        psRef.current?.update();
-      }, 0);
-    }
-  }, [todos]);
-
-  const handleSubmitTodo = (event: React.FormEvent<HTMLFormElement>) => {
-    setTimeout(() => {
-      if (todoFormRef.current) {
-        todoFormRef.current.reset();
-      }
-    }, 10);
-  };
-
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-h-screen flex-col">
       <nav className="flex flex-row items-center justify-between border-b-2 bg-400 px-4 py-3">
         <Link to={"/"} className="flex items-center gap-2 sm:gap-4">
           <img
@@ -136,90 +41,64 @@ export default function Index() {
         </div>
       </nav>
 
-      <section>
-        <PomodoroTimer />
-      </section>
+      <main className="flex-grow">
+        <section className="flex min-h-screen items-center justify-center">
+          <PomodoroTimer />
+        </section>
 
-      {/* <section className="mx-auto w-full max-w-2xl rounded-2xl border-2 bg-100 shadow-lg">
-        <main className="flex w-full flex-col items-center justify-center space-y-10 p-4">
-          <div className="w-full space-y-4 p-10">
-            <span className="mb-2 block text-center">
-              Adicione um item a sua lista
-            </span>
+        <section className="space-y-6 bg-white px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <h1 className="mb-6 text-2xl font-semibold text-800">
+              Um cronômetro Pomodoro online para aumentar sua produtividade
+            </h1>
 
-            <Form
-              ref={todoFormRef}
-              method="post"
-              onSubmit={handleSubmitTodo}
-              className="flex items-center rounded-2xl border-2 bg-300/60 p-2"
-            >
-              <input
-                type="text"
-                name="todoItem"
-                placeholder="Digite aqui..."
-                className="bg-transparent flex-1 appearance-none border-0 px-0 outline-none focus:ring-0"
-                style={{ backgroundColor: "transparent", boxShadow: "none" }}
-              />
-              <button type="submit" value={"add"} name="intent">
-                <Plus className="ml-2 cursor-pointer" />
-              </button>
-            </Form>
-          </div>
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-900">
+                O que é um Pomodoro?
+              </h2>
+              <div className="h-1 w-4 bg-350"></div>
+              <p className="text-gray-700 leading-relaxed">
+                A Técnica Pomodoro foi criada por Francesco Cirillo para uma
+                forma mais produtiva de trabalhar e estudar. A técnica utiliza
+                um cronômetro para dividir o trabalho em intervalos,
+                tradicionalmente de 25 minutos de duração, separados por
+                pequenos intervalos. Cada intervalo é conhecido como pomodoro,
+                da palavra italiana para "tomate", em referência ao cronômetro
+                de cozinha em formato de tomate que Cirillo usava quando era
+                estudante universitário.{" "}
+                <span className="text-500">- Wikipédia</span>
+              </p>
+            </div>
 
-          <div className="flex h-96 w-full items-center justify-center rounded-b-2xl bg-400 p-4">
-            <div className="w-96">
-              <div
-                ref={scrollContainerRef}
-                className="relative max-h-64 overflow-y-auto pr-6"
-              >
-                {todos.length === 0 ? (
-                  <div className="text-gray-500 flex flex-col items-center justify-center p-6 text-center">
-                    <ClipboardList className="mb-4 h-12 w-12" />
-                    <p className="text-lg">Lista vazia</p>
-                    <p className="text-sm">Adicione novos itens</p>
-                  </div>
-                ) : (
-                  todos.map((todo) => (
-                    <Form
-                      onChange={(e) => {
-                        submit(e.currentTarget);
-                      }}
-                      method="post"
-                      key={todo.id}
-                      className={`
-                        bg-100 border-2 p-4 w-full mb-4 flex items-center 
-                        ${
-                          todo.completed
-                            ? "opacity-50 line-through decoration-2"
-                            : ""
-                        }
-                      `}
-                    >
-                      <input type="hidden" name="id" value={todo.id} />
-                      <input
-                        name="intent"
-                        value={"toggle"}
-                        type="checkbox"
-                        defaultChecked={todo.completed}
-                        className="mr-3"
-                      />
-                      <span className="flex-1">{todo.text}</span>
-                      <button
-                        name="intent"
-                        value="delete"
-                        type="submit"
-                        className="text-red-500 hover:text-red-700 ml-2"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </Form>
-                  ))
-                )}
-              </div>
+            <div className="space-y-4">
+              <h2 className="mt-5 text-xl font-semibold text-900">
+                Como usar o Pomodoro?
+              </h2>
+              <div className="h-1 w-4 bg-350"></div>
+
+              <ol className="text-gray-700 list-inside list-decimal space-y-2">
+                <li>Adicione tarefas para trabalhar hoje</li>
+                <li>
+                  Defina uma estimativa de pomodoros (1 = 25 min de trabalho)
+                  para cada tarefa
+                </li>
+                <li>
+                  Inicie o cronômetro e concentre-se na tarefa por 25 minutos
+                </li>
+                <li>Faça uma pausa de 5 minutos quando o alarme tocar</li>
+                <li>Repita de 3 a 5 até terminar as tarefas</li>
+              </ol>
             </div>
           </div>
-        </main>
-      </section> */}
+        </section>
+      </main>
+
+      <footer className="text-gray-600 bg-white px-4 py-6 text-center">
+        <p>
+          &copy; 2025 Pomodoro - ToDo. Desenvolvido para aumentar sua
+          produtividade.
+        </p>
+      </footer>
     </div>
   );
 }
