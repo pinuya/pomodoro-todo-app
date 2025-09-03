@@ -1,61 +1,62 @@
-import { z } from "zod";
+// ~/utils/todos.client.ts
 
 export interface Todo {
   id: string;
   text: string;
   completed: boolean;
+  createdAt: number;
 }
 
-export const todosSchema = z.object({
-  id: z.string(),
-  text: z.string(),
-  completed: z.boolean(),
-});
+const TODOS_KEY = "pomodoro_todos";
 
-export const todosListSchema = z.array(todosSchema);
+export function safeParseTodos(): Todo[] {
+  if (typeof window === "undefined") return [];
 
-export const safeParseTodos = () => {
   try {
-    const todos = JSON.parse(localStorage.getItem("todos") || "[]");
-    return todosListSchema.parse(todos);
+    const stored = localStorage.getItem(TODOS_KEY);
+    if (!stored) return [];
+
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao carregar todos:", error);
     return [];
   }
-};
+}
 
-export const addTodo = (text: string) => {
+function saveTodos(todos: Todo[]): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(TODOS_KEY, JSON.stringify(todos));
+  } catch (error) {
+    console.error("Erro ao salvar todos:", error);
+  }
+}
+
+export function addTodo(text: string): void {
+  const todos = safeParseTodos();
   const newTodo: Todo = {
     id: Date.now().toString(),
-    text,
+    text: text.trim(),
     completed: false,
+    createdAt: Date.now(),
   };
 
-  const prevTodos = safeParseTodos();
-  const incompleteTodos = prevTodos.filter((todo) => !todo.completed);
-  const completedTodos = prevTodos.filter((todo) => todo.completed);
+  todos.push(newTodo);
+  saveTodos(todos);
+}
 
-  const newTodos = [newTodo, ...incompleteTodos, ...completedTodos];
-  localStorage.setItem("todos", JSON.stringify(newTodos));
-};
+export function deleteTodo(id: string): void {
+  const todos = safeParseTodos();
+  const filteredTodos = todos.filter((todo) => todo.id !== id);
+  saveTodos(filteredTodos);
+}
 
-export const deleteTodo = (id: string) => {
-  const prevTodos = safeParseTodos();
-
-  const newTodos = prevTodos.filter((todo) => todo.id !== id);
-  localStorage.setItem("todos", JSON.stringify(newTodos));
-};
-
-export const toggleTodo = (id: string) => {
-  const prevTodos = safeParseTodos();
-  const updatedTodos = prevTodos.map((todo) =>
+export function toggleTodo(id: string): void {
+  const todos = safeParseTodos();
+  const updatedTodos = todos.map((todo) =>
     todo.id === id ? { ...todo, completed: !todo.completed } : todo
   );
-
-  const sortedTodos = [
-    ...updatedTodos.filter((todo) => !todo.completed),
-    ...updatedTodos.filter((todo) => todo.completed),
-  ];
-
-  localStorage.setItem("todos", JSON.stringify(sortedTodos));
-};
+  saveTodos(updatedTodos);
+}

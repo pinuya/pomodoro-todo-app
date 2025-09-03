@@ -1,10 +1,10 @@
 import { Link } from "@remix-run/react";
 import { MetaFunction } from "@remix-run/node";
-import { Minus, PictureInPicture2, X } from "lucide-react";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
-
 import "~/styles/custom-scrollbar.css";
 import PomodoroTimer from "~/components/Pomodoro";
+import Tasks from "~/components/Tasks";
+import { FaGithub } from "react-icons/fa";
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,7 +16,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <div className="flex min-h-screen flex-col">
-      <nav className="flex flex-row items-center justify-between border-b-2 bg-400 px-4 py-3">
+      <nav className="flex flex-row items-center justify-center border-b-2 bg-400 px-4 py-3">
         <Link to={"/"} className="flex items-center gap-2 sm:gap-4">
           <img
             src="/favicon.ico"
@@ -25,25 +25,21 @@ export default function Index() {
           />
           <h1 className="text-lg font-semibold sm:text-2xl">Pomodoro</h1>
         </Link>
-
-        <div className="flex items-center gap-1 sm:gap-3">
-          <div className="flex items-center justify-center bg-300 p-1">
-            <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
-          </div>
-
-          <div className="flex items-center justify-center bg-300 p-1">
-            <PictureInPicture2 className="h-4 w-4 sm:h-5 sm:w-5" />
-          </div>
-
-          <div className="flex items-center justify-center bg-300 p-1">
-            <X className="h-4 w-4 sm:h-5 sm:w-5" />
-          </div>
-        </div>
       </nav>
 
       <main className="flex-grow">
-        <section className="flex min-h-screen items-center justify-center">
-          <PomodoroTimer />
+        <section className="flex min-h-screen items-center justify-center py-8">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col items-center justify-center gap-8">
+              <div className="flex w-full justify-center">
+                <PomodoroTimer />
+              </div>
+
+              <div className="flex w-full justify-center">
+                <Tasks />
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="space-y-6 bg-white px-4 py-8 sm:px-6 lg:px-8">
@@ -93,11 +89,15 @@ export default function Index() {
         </section>
       </main>
 
-      <footer className="text-gray-600 bg-white px-4 py-6 text-center">
+      <footer className="text-gray-600 flex justify-center gap-5 bg-white px-4 py-4">
         <p>
-          &copy; 2025 Pomodoro - ToDo. Desenvolvido para aumentar sua
-          produtividade.
+          &copy; 2025 <span className="text-500">Pomodoro - ToDo</span> .
+          Desenvolvido para aumentar sua produtividade.
         </p>
+
+        <Link to={"https://github.com/pinuya"}>
+          <FaGithub className="h-6 w-6 text-400 hover:text-700" />
+        </Link>
       </footer>
     </div>
   );

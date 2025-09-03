@@ -64,7 +64,7 @@ export default function PomodoroTimer() {
 
   return (
     <div className="flex items-center justify-center">
-      <div className="w-full max-w-md rounded-3xl border-2 bg-100 p-12 text-center shadow-2xl">
+      <div className="w-full max-w-md rounded-3xl border-2 bg-100 p-12 text-center shadow-xl">
         <div className="relative mb-8">
           <div className="text-gray-800 mb-4 font-outfit text-6xl font-bold">
             {formatTime(timeLeft)}
