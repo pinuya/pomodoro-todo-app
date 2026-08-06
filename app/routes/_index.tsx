@@ -1,5 +1,4 @@
-import { Link } from "@remix-run/react";
-import { MetaFunction } from "@remix-run/node";
+import { Link, type MetaFunction } from "react-router";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "~/styles/custom-scrollbar.css";
 import PomodoroTimer from "~/components/Pomodoro";
