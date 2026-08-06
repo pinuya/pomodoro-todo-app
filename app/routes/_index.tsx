@@ -1,102 +1,105 @@
-import { Link, type MetaFunction } from "react-router";
-import "perfect-scrollbar/css/perfect-scrollbar.css";
-import "~/styles/custom-scrollbar.css";
-import PomodoroTimer from "~/components/Pomodoro";
-import Tasks from "~/components/Tasks";
 import { FaGithub } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { Link, useRouteLoaderData, type MetaFunction } from "react-router";
+import LanguageSwitcher from "~/components/LanguageSwitcher";
+import PomodoroTimer from "~/components/Pomodoro";
+import type { loader as rootLoader } from "~/root";
+import "~/styles/custom-scrollbar.css";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Pomodoro - ToDo Site" },
-    { name: "Pomodoro - ToDo Site", content: "Pomodoro - ToDo Site" },
-  ];
-};
+export const meta: MetaFunction = () => [
+  { title: "Pomodoro - ToDo Site" },
+  {
+    name: "description",
+    content:
+      "Cronômetro Pomodoro online com tarefas, durações personalizáveis, som e notificações.",
+  },
+];
 
 export default function Index() {
+  const { t } = useTranslation();
+  const year = useRouteLoaderData<typeof rootLoader>("root")?.year;
+
+  const steps = [
+    t("about.step1"),
+    t("about.step2"),
+    t("about.step3"),
+    t("about.step4"),
+    t("about.step5"),
+  ];
+
   return (
     <div className="flex min-h-screen flex-col">
-      <nav className="flex flex-row items-center justify-center border-b-2 bg-400 px-4 py-3">
-        <Link to={"/"} className="flex items-center gap-2 sm:gap-4">
-          <img
-            src="/favicon.ico"
-            alt="Logo"
-            className="h-6 w-6 sm:h-8 sm:w-8"
-          />
-          <h1 className="text-lg font-semibold sm:text-2xl">Pomodoro</h1>
-        </Link>
+      <nav className="sticky top-0 z-40 border-b-2 border-400/40 bg-400/95 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+          <Link
+            to="/"
+            className="flex items-center gap-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-800 sm:gap-3"
+          >
+            <img
+              src="/favicon.ico"
+              alt=""
+              className="h-7 w-7 sm:h-8 sm:w-8"
+              aria-hidden="true"
+            />
+            <span className="font-archivo text-lg font-semibold text-800 sm:text-xl">
+              {t("nav.title")}
+            </span>
+          </Link>
+
+          <LanguageSwitcher />
+        </div>
       </nav>
 
       <main className="flex-grow">
-        <section className="flex min-h-screen items-center justify-center py-8">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center justify-center gap-8">
-              <div className="flex w-full justify-center">
-                <PomodoroTimer />
-              </div>
-
-              <div className="flex w-full justify-center">
-                <Tasks />
-              </div>
-            </div>
-          </div>
+        <section className="flex justify-center px-4 py-8 sm:py-12">
+          <PomodoroTimer />
         </section>
 
-        <section className="space-y-6 bg-white px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl">
-            <h1 className="mb-6 text-2xl font-semibold text-800">
-              Um cronômetro Pomodoro online para aumentar sua produtividade
+        <section className="border-t-2 border-400/30 bg-100 px-4 py-12 sm:px-6">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="mb-8 font-archivo text-2xl font-semibold leading-snug text-800 sm:text-3xl">
+              {t("about.heading")}
             </h1>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <h2 className="text-xl font-semibold text-900">
-                O que é um Pomodoro?
+                {t("about.whatTitle")}
               </h2>
-              <div className="h-1 w-4 bg-350"></div>
-              <p className="text-gray-700 leading-relaxed">
-                A Técnica Pomodoro foi criada por Francesco Cirillo para uma
-                forma mais produtiva de trabalhar e estudar. A técnica utiliza
-                um cronômetro para dividir o trabalho em intervalos,
-                tradicionalmente de 25 minutos de duração, separados por
-                pequenos intervalos. Cada intervalo é conhecido como pomodoro,
-                da palavra italiana para "tomate", em referência ao cronômetro
-                de cozinha em formato de tomate que Cirillo usava quando era
-                estudante universitário.{" "}
-                <span className="text-500">- Wikipédia</span>
+              <div className="h-1 w-8 rounded-full bg-350" />
+              <p className="leading-relaxed text-700">
+                {t("about.whatBody")}{" "}
+                <span className="text-500">{t("about.source")}</span>
               </p>
             </div>
 
-            <div className="space-y-4">
-              <h2 className="mt-5 text-xl font-semibold text-900">
-                Como usar o Pomodoro?
+            <div className="mt-10 space-y-3">
+              <h2 className="text-xl font-semibold text-900">
+                {t("about.howTitle")}
               </h2>
-              <div className="h-1 w-4 bg-350"></div>
-
-              <ol className="text-gray-700 list-inside list-decimal space-y-2">
-                <li>Adicione tarefas para trabalhar hoje</li>
-                <li>
-                  Defina uma estimativa de pomodoros (1 = 25 min de trabalho)
-                  para cada tarefa
-                </li>
-                <li>
-                  Inicie o cronômetro e concentre-se na tarefa por 25 minutos
-                </li>
-                <li>Faça uma pausa de 5 minutos quando o alarme tocar</li>
-                <li>Repita de 3 a 5 até terminar as tarefas</li>
+              <div className="h-1 w-8 rounded-full bg-350" />
+              <ol className="list-inside list-decimal space-y-2 leading-relaxed text-700">
+                {steps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
               </ol>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="text-gray-600 flex justify-center gap-5 bg-white px-4 py-4">
-        <p>
-          &copy; 2025 <span className="text-500">Pomodoro - ToDo</span> .
-          Desenvolvido para aumentar sua produtividade.
-        </p>
-
-        <Link to={"https://github.com/pinuya"}>
-          <FaGithub className="h-6 w-6 text-400 hover:text-700" />
-        </Link>
+      <footer className="border-t-2 border-400/30 bg-100 px-4 py-6">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-5">
+          <p className="text-sm text-700">{t("footer.rights", { year })}</p>
+          <a
+            href="https://github.com/pinuya"
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label={t("footer.github")}
+            className="rounded-full p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-600"
+          >
+            <FaGithub className="h-6 w-6 text-500 transition-colors hover:text-800" />
+          </a>
+        </div>
       </footer>
     </div>
   );
