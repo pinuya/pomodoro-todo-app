@@ -5,6 +5,7 @@ import { usePomodoro, type PomodoroTransition, type TimerMode } from "~/hooks/us
 import { usePomodoroStore } from "~/hooks/usePomodoroStore";
 import { notifyUser } from "~/utils/notifications";
 import { playChime, primeAudio } from "~/utils/sound.client";
+import MusicPlayer from "./MusicPlayer";
 import SettingsDialog from "./SettingsDialog";
 import TaskList from "./TaskList";
 
@@ -286,6 +287,10 @@ export default function PomodoroTimer() {
           onEstimate={store.setEstimate}
           onClearCompleted={store.clearCompleted}
         />
+      </div>
+
+      <div className="mt-6 rounded-[2rem] border-2 border-400/30 bg-100/60 p-5 shadow-lg sm:p-6">
+        <MusicPlayer url={store.playlistUrl} onChange={store.setPlaylistUrl} />
       </div>
 
       {settingsOpen ? (

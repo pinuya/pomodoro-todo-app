@@ -52,6 +52,21 @@ export const resources = {
         remaining_other: "{{count}} restantes",
         clearCompleted: "Limpar concluídas",
       },
+      player: {
+        title: "Música",
+        placeholder: "Cole o link de uma playlist...",
+        add: "Carregar playlist",
+        change: "Trocar playlist",
+        remove: "Remover playlist",
+        empty: "Nenhuma playlist ainda.",
+        emptyHint:
+          "Cole um link do YouTube, Spotify, SoundCloud, Deezer ou Apple Music.",
+        invalid:
+          "Link não reconhecido. Use uma playlist do YouTube, Spotify, SoundCloud, Deezer ou Apple Music.",
+        frameTitle: "Player de {{provider}}",
+        spotifyNote:
+          "No Spotify, sem estar logado com Premium, o player toca apenas prévias de 30 segundos.",
+      },
       settings: {
         title: "Configurações",
         open: "Abrir configurações",
@@ -141,6 +156,21 @@ export const resources = {
         remaining: "{{count}} left",
         remaining_other: "{{count}} left",
         clearCompleted: "Clear completed",
+      },
+      player: {
+        title: "Music",
+        placeholder: "Paste a playlist link...",
+        add: "Load playlist",
+        change: "Change playlist",
+        remove: "Remove playlist",
+        empty: "No playlist yet.",
+        emptyHint:
+          "Paste a link from YouTube, Spotify, SoundCloud, Deezer or Apple Music.",
+        invalid:
+          "Link not recognised. Use a playlist from YouTube, Spotify, SoundCloud, Deezer or Apple Music.",
+        frameTitle: "{{provider}} player",
+        spotifyNote:
+          "On Spotify, without being logged in with Premium, the player only plays 30-second previews.",
       },
       settings: {
         title: "Settings",

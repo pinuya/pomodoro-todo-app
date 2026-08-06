@@ -21,6 +21,7 @@ export interface TimerSettings {
 const TODOS_KEY = "pomodoro_todos";
 const SETTINGS_KEY = "pomodoro_settings";
 const ACTIVE_TASK_KEY = "pomodoro_active_task";
+const PLAYLIST_KEY = "pomodoro_playlist";
 
 export const DEFAULT_SETTINGS: TimerSettings = {
   focus: 25,
@@ -153,6 +154,25 @@ export function saveActiveTaskId(id: string | null): void {
     else localStorage.setItem(ACTIVE_TASK_KEY, id);
   } catch (error) {
     console.error("Failed to persist the active task:", error);
+  }
+}
+
+export function loadPlaylistUrl(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return localStorage.getItem(PLAYLIST_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export function savePlaylistUrl(url: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (url) localStorage.setItem(PLAYLIST_KEY, url);
+    else localStorage.removeItem(PLAYLIST_KEY);
+  } catch (error) {
+    console.error("Failed to persist the playlist:", error);
   }
 }
 

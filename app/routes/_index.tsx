@@ -35,12 +35,16 @@ export default function Index() {
             to="/"
             className="flex items-center gap-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-800 sm:gap-3"
           >
-            <img
-              src="/favicon.ico"
-              alt=""
-              className="h-7 w-7 sm:h-8 sm:w-8"
-              aria-hidden="true"
-            />
+            {/* The logo is a red tomato with a green leaf, which disappears
+                against the green nav — a light disc gives it contrast. */}
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-800/25 bg-100 shadow-sm sm:h-10 sm:w-10">
+              <img
+                src="/favicon.ico"
+                alt=""
+                className="h-6 w-6 sm:h-7 sm:w-7"
+                aria-hidden="true"
+              />
+            </span>
             <span className="font-archivo text-lg font-semibold text-800 sm:text-xl">
               {t("nav.title")}
             </span>

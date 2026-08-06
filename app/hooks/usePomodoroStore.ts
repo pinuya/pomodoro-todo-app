@@ -6,9 +6,11 @@ import {
   clamp,
   createTodo,
   loadActiveTaskId,
+  loadPlaylistUrl,
   loadSettings,
   loadTodos,
   saveActiveTaskId,
+  savePlaylistUrl,
   saveSettings,
   saveTodos,
   type TimerSettings,
@@ -22,6 +24,7 @@ export function usePomodoroStore() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [settings, setSettings] = useState<TimerSettings>(DEFAULT_SETTINGS);
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const [playlistUrl, setPlaylistUrl] = useState("");
 
   useEffect(() => {
     // Syncing from an external store (localStorage) on mount. It has to happen
@@ -34,6 +37,8 @@ export function usePomodoroStore() {
     setSettings(loadSettings());
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveTaskId(loadActiveTaskId());
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPlaylistUrl(loadPlaylistUrl());
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setHydrated(true);
   }, []);
@@ -51,6 +56,10 @@ export function usePomodoroStore() {
   useEffect(() => {
     if (hydrated) saveActiveTaskId(activeTaskId);
   }, [activeTaskId, hydrated]);
+
+  useEffect(() => {
+    if (hydrated) savePlaylistUrl(playlistUrl);
+  }, [playlistUrl, hydrated]);
 
   const addTask = useCallback((text: string, estimate = 1) => {
     const trimmed = text.trim();
@@ -132,6 +141,8 @@ export function usePomodoroStore() {
     activeTask,
     activeTaskId,
     setActiveTaskId,
+    playlistUrl,
+    setPlaylistUrl,
     addTask,
     deleteTask,
     toggleTask,
